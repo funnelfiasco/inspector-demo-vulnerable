@@ -1,4 +1,4 @@
-# Kusari Inspector Demo
+# Kusari Inspector Demo 
 
 This repo contains example code used to showcase the features of [Kusari Inspector](https://kusari.dev/inspector).
 See instructions below for instructions on self-guided demos.
