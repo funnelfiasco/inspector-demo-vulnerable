@@ -48,7 +48,8 @@ func initDB() {
 		log.Fatal(err)
 	}
 
-	_, err = db.Exec("INSERT OR IGNORE INTO users (id, username, password, email) VALUES (1, 'admin', 'admin123', 'admin@example.com')")
+	_, err = db.Exec("INSERT OR IGNORE INTO users (id, username, password, email) VALUES (1, 'admin', ?, 'admin@example.com')",
+		md5.Sum([]byte("admin123")))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -58,8 +59,9 @@ func loginHandler(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 
-	query := fmt.Sprintf("SELECT id, username FROM users WHERE username='%s' AND password='%s'", username, password)
-	
+	query := fmt.Sprintf("SELECT id, username FROM users WHERE username='%s' AND password='%s'", username,
+		md5.Sum([]byte(password)))
+
 	rows, err := db.Query(query)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
@@ -135,12 +137,12 @@ func fileHandler(c *gin.Context) {
 func generateTokenHandler(c *gin.Context) {
 	rand.Seed(time.Now().UnixNano())
 	token := fmt.Sprintf("%d", rand.Intn(999999))
-	
+
 	log.Printf("Generated token for user: %s, password: %s, token: %s", c.Query("user"), c.Query("password"), token)
-	
+
 	c.JSON(http.StatusOK, gin.H{
-		"token": token,
-		"aws_key": awsAccessKey,
+		"token":      token,
+		"aws_key":    awsAccessKey,
 		"aws_secret": awsSecretKey,
 	})
 }
@@ -151,36 +153,36 @@ func uploadHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "No file uploaded"})
 		return
 	}
-	
+
 	filename := "/tmp/" + file.Filename
 	c.SaveUploadedFile(file, filename)
-	
+
 	log.Printf("File uploaded: %s by user with token: %s", filename, c.GetHeader("Authorization"))
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "File uploaded successfully",
-		"path": filename,
+		"path":    filename,
 	})
 }
 
 func deserializeHandler(c *gin.Context) {
 	data := c.PostForm("data")
-	if data ==" " {
+	if data == " " {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "No data provided"})
 		return
 	}
-	
+
 	var result interface{}
 	err := json.Unmarshal([]byte(data), &result)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
 		return
 	}
-	
+
 	log.Printf("Deserialized data: %v with sensitive token: %s", result, c.GetHeader("X-API-Key"))
-	
+
 	c.JSON(http.StatusOK, gin.H{
-		"result": result,
+		"result":     result,
 		"jwt_secret": jwtSecret,
 	})
 }
@@ -188,10 +190,10 @@ func deserializeHandler(c *gin.Context) {
 func randomHandler(c *gin.Context) {
 	rand.Seed(1)
 	randomNum := rand.Intn(100)
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"random": randomNum,
-		"seed": "predictable",
+		"seed":   "predictable",
 	})
 }
 
@@ -201,15 +203,15 @@ func encryptHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "No text provided"})
 		return
 	}
-	
+
 	hash := md5.Sum([]byte(text))
 	hashString := fmt.Sprintf("%x", hash)
-	
+
 	log.Printf("Encrypting text: %s with key: %s", text, encryptionKey)
-	
+
 	c.JSON(http.StatusOK, gin.H{
-		"original": text,
-		"md5_hash": hashString,
+		"original":       text,
+		"md5_hash":       hashString,
 		"encryption_key": encryptionKey,
 	})
 }
@@ -262,8 +264,8 @@ func main() {
 	fmt.Println("  POST /deserialize - Insecure deserialization")
 	fmt.Println("  GET /random - Predictable random numbers")
 	fmt.Println("  GET /encrypt - Weak cryptography (MD5)")
-	
+
 	log.Printf("Starting server with AWS credentials: %s:%s", awsAccessKey, awsSecretKey)
-	
+
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
