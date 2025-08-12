@@ -11,7 +11,19 @@ See instructions below for instructions on self-guided demos.
 
 ## Self-guided demos
 
-To try Kusari Inspector:
+### Pull requests against this repo
+
+To try Kusari Inspector by opening a pull request against this repo:
+
+1. [Start a new pull request](https://github.com/Kusari-Sandbox/inspector-demo-vulnerable/compare) in this repo
+2. Select one of the demo branches (see below)
+3. Click the **Create pull request** button.
+4. In a few seconds, you'll see what Kusari Inspector says!
+5. When you're done, close the pull request.
+
+### Create your own repo
+
+To try Kusari Inspector with your own repo:
 
 1. [Create a new repo from this template](https://github.com/new?template_name=inspector-demo-vulnerable&template_owner=Kusari-Sandbox)
    - **Check the "Include all branches" box**
@@ -39,3 +51,5 @@ The following branches will demonstrate various Kusari Inspector use cases.
 
 Since this is a product demo repo, we don't intend to receive external contributions.
 If an example is not working as expected, please [open an issue](https://github.com/Kusari-Sandbox/inspector-demo/issues/new/choose) or email support@kusari.dev.
+
+Note that this repo is configured to close pull requests automatically after one day.
