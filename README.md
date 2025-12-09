@@ -42,6 +42,7 @@ The following branches will demonstrate various Kusari Inspector use cases.
 | Branch | Description
 | ------ | -----------
 | go_unmaintained     | A Go app pulls in an inactive dependency
+| go_scorecard        | A Go app pulls in a dependency with a poor security posture
 | laravel_api_key     | Find secrets in a Laravel application environment
 | md5_passwords       | A Go app uses the MD5 algorithm for hashing passwords
 | python_maintenance  | Python libraries with non-blocking maintenance issues
