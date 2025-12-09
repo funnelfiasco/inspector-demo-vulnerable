@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
+    _ "github.com/cpuguy83/go-md2man/v2/md2man"
 )
 
 const (
